@@ -112,7 +112,7 @@ body {
     width: 1200px;
     transition: width 1s ease-in-out;
 }
-
+ 
 .page {
     position: absolute;
     top: 0;
@@ -134,7 +134,7 @@ body {
     align-items: center;
     text-align: center;
 }
-
+ 
 /* Z-index for correct page order */
 .front-cover { z-index: 6; }
 .page-1 { z-index: 5; }
@@ -143,12 +143,12 @@ body {
 .page-4 { z-index: 2; }
 .closing-page { z-index: 1; }
 .back-cover { z-index: 0; }
-
+ 
 .front-cover, .back-cover {
     background: linear-gradient(135deg, #f5d0e3, #e6c2d1);
     border: 2px solid #e1b4c9;
 }
-
+ 
 /* Custom Front Cover with Image */
 .front-cover {
     background-image: url("img 1.jpg");
@@ -183,21 +183,21 @@ body {
     height: 100%;
     width: 100%;
 }
-
+ 
 .back-cover {
     transform-origin: right;
     left: auto;
     right: 0;
 }
-
+ 
 .page.flipped {
     transform: rotateY(-180deg);
 }
-
+ 
 .front-cover.flipped {
     transform: rotateY(-180deg);
 }
-
+ 
 .double-page-content {
     display: flex;
     width: 100%;
@@ -266,7 +266,7 @@ body {
     font-size: 1.5em;
     line-height: 1.5;
 }
-
+ 
 .image-content img {
     max-width: 100%;
     max-height: 100%;
@@ -308,14 +308,14 @@ body {
     width: 100%;
     margin-top: 20px;
 }
-
+ 
 .closing-page .closing-options {
     display: flex;
     flex-direction: column;
     gap: 10px;
     margin-top: 20px;
 }
-
+ 
 .page-cover h1 {
     font-family: 'Dancing Script', cursive;
     font-size: 4em;
@@ -323,7 +323,7 @@ body {
     margin: 0;
 }
 .page-cover h2 { color: #88456a; margin-top: 10px; }
-
+ 
 .closing-page h1 {
     font-family: 'Dancing Script', cursive;
     font-size: 3em;
@@ -335,34 +335,6 @@ body {
 .closing-page h2 {
     color: #88456a;
     margin-top: 10px;
-}
-
-/* Styles for the new music control button */
-.music-controls {
-    position: fixed; /* Changed from 'absolute' to 'fixed' */
-    top: 20px;
-    right: 20px;
-    z-index: 100; /* Increased z-index to ensure it's always on top */
-}
-
-.music-btn {
-    background-color: #f27cad;
-    border: none;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    font-size: 1.5em;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.music-btn:hover {
-    background-color: #f0759e;
-    transform: translateY(-2px) scale(1.1);
 }
 
 .nav-btn {
@@ -446,7 +418,7 @@ body {
     margin-bottom: 10px;
     color: #c46294;
 }
-
+ 
 .memory-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -575,35 +547,10 @@ body {
         font-size: 2em;
     }
     .game-container h2 { font-size: 1.8em; }
-
-    .music-controls {
-        top: 10px;
-        right: 10px;
-    }
 }
 </style>
 </head>
 <body>
-    <!--
-      The audio element is placed here. The 'preload' attribute tells the browser to
-      preload the audio so it can start playing immediately when needed.
-    -->
-    <audio id="background-music" loop preload="auto">
-        <!--
-          This is a placeholder music file from a free-to-use library.
-          You should replace the `src` with the path to your own music file.
-        -->
-        <source src="The Lord of The Rings Song That Shouldve Been in Your Wedding.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
-
-    <!-- Global music control button - now outside the book, always visible -->
-    <div class="music-controls">
-        <button class="music-btn" id="music-toggle-btn">
-            <i class="fas fa-volume-mute"></i>
-        </button>
-    </div>
-
     <div id="heart-rain-container"></div>
     <div id="confetti-container"></div>
     <div class="book-container">
@@ -687,7 +634,7 @@ body {
                     </div>
                     <div class="right-half">
                         <div class="text-content">
-                            <p>wasa jyada khus hona ki jarurat nhi h such btau to wo line mera nhi h mera ek khaas dost na di ha ,wahi dost jo tujhpa line maar rha tha 😂. </p>
+                            <p>wasa jyada khus hona ki jarurat nhi h such btau to wo lines mera nhi h mera ek khaas dost na di ha ,wahi dost jo tujhpa line maar rha tha 😂. </p>
                             <p class="signature">Always be happy. Happy Friendship Day.</p>
                             <p class="signature">— Ashutosh</p>
                         </div>
@@ -737,9 +684,6 @@ body {
             const pages = document.querySelectorAll('.page:not(.front-cover, .back-cover)');
             const frontCover = document.getElementById('front-cover');
             const backCover = document.getElementById('back-cover');
-            const audio = document.getElementById('background-music'); // Get the audio element
-            const musicToggleBtn = document.getElementById('music-toggle-btn'); // Get the new music button
-            let isMusicPlaying = false; // A flag to track music state
             let currentPageIndex = 0;
             
             // Game modal elements
@@ -777,30 +721,6 @@ body {
                 setInterval(createHeartRain, 500);
             }
 
-            // Function to update the music button icon
-            function updateMusicButtonIcon() {
-                const icon = musicToggleBtn.querySelector('i');
-                if (isMusicPlaying) {
-                    icon.classList.remove('fa-volume-mute');
-                    icon.classList.add('fa-volume-up');
-                } else {
-                    icon.classList.remove('fa-volume-up');
-                    icon.classList.add('fa-volume-mute');
-                }
-            }
-            
-            // Music button click handler
-            musicToggleBtn.addEventListener('click', () => {
-                if (isMusicPlaying) {
-                    audio.pause();
-                    isMusicPlaying = false;
-                } else {
-                    audio.play().catch(e => console.log("Autoplay failed:", e));
-                    isMusicPlaying = true;
-                }
-                updateMusicButtonIcon();
-            });
-
             // Open book and start animations
             openBtn.addEventListener('click', () => {
                 book.classList.add('open');
@@ -817,16 +737,6 @@ body {
                         pages[currentPageIndex].classList.add('flipped');
                         currentPageIndex++;
                     }
-                    if (currentPageIndex === pages.length - 1) { // Check if we are flipping to the last page (closing-page)
-                        // Play the music only if it's not already playing when we reach the last page
-                        if (!isMusicPlaying) {
-                            audio.play().catch(e => {
-                                console.log("Autoplay failed:", e);
-                            });
-                            isMusicPlaying = true;
-                            updateMusicButtonIcon();
-                        }
-                    }
                     if (currentPageIndex === pages.length) {
                         backCover.classList.add('flipped');
                     }
@@ -837,15 +747,6 @@ body {
             const backButtons = document.querySelectorAll('.back-btn');
             backButtons.forEach(button => {
                 button.addEventListener('click', () => {
-                    // Check if we are navigating away from the last page
-                    if (currentPageIndex === pages.length - 1) {
-                         // Stop the music when navigating away from the last page
-                        audio.pause();
-                        audio.currentTime = 0;
-                        isMusicPlaying = false;
-                        updateMusicButtonIcon();
-                    }
-
                     if (currentPageIndex > 0) {
                         currentPageIndex--;
                         pages[currentPageIndex].classList.remove('flipped');
@@ -869,12 +770,6 @@ body {
                 
                 document.querySelectorAll('.heart').forEach(h => h.remove());
                 document.querySelectorAll('.confetti').forEach(c => c.remove());
-                
-                // Stop the music and reset it when the book is restarted
-                audio.pause();
-                audio.currentTime = 0;
-                isMusicPlaying = false;
-                updateMusicButtonIcon();
             });
 
             // --- Mini-game Logic ---
