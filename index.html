@@ -7,9 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-/* This CSS has been updated to fix the image-cropping issue on Page 4 and 
- * the page overlap problem during the flip animation. 
- * The image container is now more flexible and the z-index is managed correctly. 
+/* This CSS has been updated to remove the 'glossy' boxes that were causing display issues on mobile.
+ * The text and images are now placed directly on the page background for better readability.
+ * The mobile responsiveness for text has been improved to fix overflow.
  */
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
@@ -155,7 +155,7 @@ body {
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
-    color: #4a4a4a; /* Ensure text is readable */
+    color: #4a4a4a;
 }
 
 /* Custom Closing Page with a full background image */
@@ -164,20 +164,22 @@ body {
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
-    padding: 0; /* Removing padding to let image fill the whole space */
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .closing-page .content-wrapper {
-    /* To keep the content readable on top of the image */
-    background: rgba(255, 255, 255, 0.2);
-    -webkit-backdrop-filter: blur(2px);
-    backdrop-filter: blur(2px);
+    background: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
     border-radius: 15px;
     padding: 20px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* For text readability */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
     height: 100%;
     width: 100%;
 }
@@ -192,23 +194,16 @@ body {
     transform: rotateY(-180deg);
 }
  
-/* Fix: Removed this rule which was causing the animation issue. 
-   The initial z-index stacking is now sufficient. */
-/* .page.flipped {
-    z-index: 7;
-} */
 .front-cover.flipped {
     transform: rotateY(-180deg);
 }
  
-/* The main double-page spread layout */
 .double-page-content {
     display: flex;
     width: 100%;
     height: 100%;
 }
 
-/* The main change: setting background image on left and right halves */
 .left-half {
     width: 50%;
     height: 100%;
@@ -219,7 +214,7 @@ body {
     justify-content: center;
     align-items: center;
     text-align: center;
-    border-right: 1px dashed #d4c8b2; /* Add a spine-like effect */
+    border-right: 1px dashed #d4c8b2;
     background-image: url("img2.jpg");
     background-size: cover;
     background-position: center center;
@@ -243,16 +238,10 @@ body {
     background-repeat: no-repeat;
 }
 
-/* New transparent panels for text and images */
-.glass-panel {
-    background: rgba(255, 255, 255, 0.2);
-    -webkit-backdrop-filter: blur(2px);
-    backdrop-filter: blur(2px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+/* Removed glossy panel styles and applied them directly to the content containers */
+.text-content, .image-content {
     padding: 20px;
-    width: 90%; /* To give some margin */
+    width: 90%;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -260,26 +249,25 @@ body {
     align-items: center;
     overflow: hidden;
 }
- 
-/* Updated styles for text inside the right-half panel */
-.glass-panel h2, .glass-panel p {
+
+.text-content h2, .text-content p {
     color: #fff;
     font-family: 'Dancing Script', cursive;
     font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Added for readability */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
     margin: 0.5em 0;
     text-align: center;
+    overflow-wrap: break-word;
 }
-.glass-panel h2 {
+.text-content h2 {
     font-size: 2.5em;
 }
-.glass-panel p {
+.text-content p {
     font-size: 1.5em;
     line-height: 1.5;
 }
  
-/* Updated image styling for auto-fit, focusing on max-width and object-fit */
-.glass-panel .image-section img {
+.image-content img {
     max-width: 100%;
     max-height: 100%;
     width: auto;
@@ -288,34 +276,28 @@ body {
     border-radius: 10px;
 }
 
-/* Specific fix for page 1 image container to stretch the image */
-.page-1 .left-half .glass-panel {
-    /* To fill the container vertically */
+.page-1 .left-half .image-content {
     height: 100%;
-    /* To ensure the inner content also takes up the full height */
     display: flex;
     justify-content: center;
     align-items: center;
 }
-.page-1 .left-half .image-section img {
-    /* This is the key change: object-fit: cover makes the image fill the space */
+.page-1 .left-half .image-content img {
     object-fit: cover;
     width: 100%;
     height: 100%;
 }
 
-/* Specific fix for page 4 image container */
-.page-4 .left-half .glass-panel {
-    /* max-height: 80%; */ /* Removed this conflicting property */
-    height: auto; /* Set height to auto to let content define it */
+.page-4 .left-half .image-content {
+    height: auto;
     width: 90%;
-    padding: 10px; /* Reduced padding for better fit */
+    padding: 10px;
 }
-.page-4 .left-half .image-section img {
-    object-fit: contain; /* Changed back to contain for portrait images */
-    width: auto; /* Changed to auto to allow natural image width */
+.page-4 .left-half .image-content img {
+    object-fit: contain;
+    width: auto;
     max-width: 100%;
-    height: auto; /* Allows natural image height to be respected */
+    height: auto;
     max-height: 100%;
 }
 
@@ -355,7 +337,6 @@ body {
     margin-top: 10px;
 }
 
-/* New button styling for navigation with icons */
 .nav-btn {
     background-color: #f27cad;
     border: none;
@@ -376,7 +357,6 @@ body {
     transform: translateY(-2px) scale(1.1);
 }
 
-/* Additional button styling for other buttons */
 #open-book, #restart-book-btn, #play-game-btn, #back-to-book-btn {
     background-color: #f477ab;
     border: none;
@@ -481,7 +461,7 @@ body {
     transform: rotateY(180deg);
 }
 .memory-card.matched .card-back {
-    background-color: #d4e157; /* A nice green for matched cards */
+    background-color: #d4e157;
     opacity: 0.8;
 }
 
@@ -505,43 +485,53 @@ body {
     }
     .double-page-content {
         flex-direction: column;
+        height: 100%;
     }
     .left-half, .right-half {
         width: 100%;
         height: 50%;
         border-right: none;
         border-bottom: 1px dashed #d4c8b2;
+        padding: 10px;
+        text-align: center;
+        flex-grow: 1;
     }
-    .page-content p { font-size: 1em; }
-    .page-content p.signature { font-size: 1.5em; }
+
+    .text-content h2 {
+        font-size: 1.8em;
+    }
+    .text-content p {
+        /* FIX: Made the font size smaller for better fit on mobile */
+        font-size: 0.9em;
+        line-height: 1.4;
+        /* NEW FIX: Added padding and adjusted width to give text more breathing room */
+        padding: 0 5%;
+        width: 100%;
+    }
+    
+    .text-content {
+        height: auto;
+        flex-grow: 1;
+        padding: 10px;
+        /* NEW FIX: Added a min-height to ensure the text content block has a minimum size */
+        min-height: 30%;
+    }
+
     .navigation-buttons {
         justify-content: center;
         gap: 10px;
+        margin-top: 10px;
     }
 
-    /* Fixed font size issue on small screens */
-    .glass-panel h2 {
-        font-size: 2em;
-    }
-    .glass-panel p {
-        font-size: 1.2em;
-        line-height: 1.4;
-    }
-
-    /* Additional fixes for image and text alignment */
-    .left-half, .right-half {
-        padding: 10px;
-        text-align: center;
-    }
-
-    .image-section.glass-panel {
+    .image-content {
         width: 100%;
-        height: 100%;
+        height: auto;
         padding: 10px;
         box-sizing: border-box;
+        overflow: hidden;
     }
 
-    .image-section.glass-panel img {
+    .image-content img {
         width: 100%;
         height: auto;
         max-height: 100%;
@@ -560,9 +550,6 @@ body {
         font-size: 2em;
     }
     .game-container h2 { font-size: 1.8em; }
-    .glass-panel {
-        width: 95%; /* Adjust for smaller screens */
-    }
 }
 </style>
 </head>
@@ -581,12 +568,12 @@ body {
             <div class="page page-1">
                 <div class="double-page-content">
                     <div class="left-half">
-                        <div class="image-section glass-panel">
+                        <div class="image-content">
                             <img src="Screenshot 2025-08-03 180442.png">
                         </div>
                     </div>
-                    <div class="right-half text-section">
-                        <div class="glass-panel">
+                    <div class="right-half">
+                        <div class="text-content">
                             <h2>Happy Friendship Day 💗 </h2>
                             <h2>To my old besti 😁 </h2>
                         </div>
@@ -602,12 +589,12 @@ body {
             <div class="page page-2">
                 <div class="double-page-content">
                     <div class="left-half">
-                        <div class="image-section glass-panel">
+                        <div class="image-content">
                             <img src="gif1.gif" alt="A shared memory">
                         </div>
                     </div>
-                    <div class="right-half text-section">
-                        <div class="glass-panel">
+                    <div class="right-half">
+                        <div class="text-content">
                             <p>Ha pta ha-pta ha ab aapan best friends nhi h,to tu soochagi ya sub kya h, but kya karu aaj friednship day k din kisi ki helps k liya thankyou to khena hi tha na, nhi to koi fir sa koi bolaga sub log ek jasa hi hota h 😁.</p>
                         </div>
                         <div class="navigation-buttons">
@@ -622,12 +609,12 @@ body {
             <div class="page page-3">
                 <div class="double-page-content">
                     <div class="left-half">
-                        <div class="image-section glass-panel">
+                        <div class="image-content">
                             <img src="shinchan-awks.gif" alt="Another shared memory">
                         </div>
                     </div>
-                    <div class="right-half text-section">
-                        <div class="glass-panel">
+                    <div class="right-half">
+                        <div class="text-content">
                             <p>Such kahhu to jitne bhi pal aapan na saath bitaye, woh sab mere liye bahut khaas hain.</p>
                             <p>Un yaadon ne mujhe bahut kuch sikhaya... aur main unke liye hamesha grateful rahoonga.</p>
                             <p>wasa jyada emotional mat hona such btau to ya line mera nhi h mera ek khaas dost na di ha ,wahi dost jo tujhpa line maar rha tha 😂. </p>
@@ -644,12 +631,12 @@ body {
             <div class="page page-4">
                 <div class="double-page-content">
                     <div class="left-half">
-                        <div class="image-section glass-panel">
+                        <div class="image-content">
                             <img src="img01.jpg" alt="A shared memory">
                         </div>
                     </div>
-                    <div class="right-half text-section">
-                        <div class="glass-panel">
+                    <div class="right-half">
+                        <div class="text-content">
                             <p class="signature">Always be happy. Happy Friendship Day.</p>
                             <p class="signature">— Ashutosh</p>
                         </div>
@@ -663,7 +650,6 @@ body {
             
             <!-- Page 5: New Closing Page with Image -->
             <div class="page closing-page page-5" id="closing-page">
-                <!-- Content is now centered on the single page, like the front cover -->
                 <div class="content-wrapper">
                     <h1>Thank you for everything</h1>
                     <div class="closing-options">
@@ -672,7 +658,6 @@ body {
                     </div>
                     <div class="navigation-buttons">
                         <button class="nav-btn back-btn"><i class="fas fa-arrow-left"></i></button>
-                        <!-- No next button on the last page -->
                     </div>
                 </div>
             </div>
@@ -750,13 +735,11 @@ body {
             const nextButtons = document.querySelectorAll('.next-btn');
             nextButtons.forEach(button => {
                 button.addEventListener('click', () => {
-                    // This logic now accounts for the closing page, which is pages.length
                     if (currentPageIndex < pages.length) {
                         pages[currentPageIndex].classList.add('flipped');
                         currentPageIndex++;
                     }
                     if (currentPageIndex === pages.length) {
-                        // This flips the back cover when the last page is turned
                         backCover.classList.add('flipped');
                     }
                 });
@@ -771,7 +754,6 @@ body {
                         pages[currentPageIndex].classList.remove('flipped');
                         backCover.classList.remove('flipped');
                     } else {
-                        // Go back to the front cover
                         frontCover.classList.remove('flipped');
                         book.classList.remove('open');
                     }
