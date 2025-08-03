@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Anita - A Friendship Memory Book</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+/* This CSS has been updated to fix the image-cropping issue on Page 4 and 
+ * the page overlap problem during the flip animation. 
+ * The image container is now more flexible and the z-index is managed correctly. 
+ */
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
+
+body {
+    background: linear-gradient(135deg, #FFB6C1, #FFDAB9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    color: #4a4a4a;
+    overflow: hidden;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+/* Confetti styling */
+#confetti-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 100;
+}
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: #ff69b4;
+    transform: rotate(45deg);
+    opacity: 0;
+    animation: blow-up 1.5s forwards ease-in;
+}
+@keyframes blow-up {
+    0% { transform: translateY(0) scale(0) rotate(45deg); opacity: 1; }
+    100% { transform: translateY(-500px) scale(1) rotate(45deg); opacity: 0; }
+}
+
+/* Heart Rain */
+#heart-rain-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+.heart {
+    position: absolute;
+    bottom: 100%;
+    width: 20px;
+    height: 20px;
+    background: #e44896;
+    transform: rotate(-45deg);
+    animation: rain-fall 5s linear infinite;
+    opacity: 0.5;
+}
+.heart::before, .heart::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #ff69b4;
+    border-radius: 50%;
+}
+.heart::before {
+    top: -10px;
+    left: 0;
+}
+.heart::after {
+    left: 10px;
+    top: 0;
+}
+@keyframes rain-fall {
+    0% { transform: translateY(-100px) rotate(-45deg); opacity: 0; }
+    50% { opacity: 0.5; }
+    100% { transform: translateY(120vh) rotate(-45deg); opacity: 0.1; }
+}
+
+.book-container {
+    perspective: 2000px;
+}
+
+.book {
+    width: 600px;
+    height: 800px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: width 1s ease-in-out;
+    max-width: 90vw;
+    max-height: 90vh;
+}
+
+.book.open {
+    width: 1200px;
+    transition: width 1s ease-in-out;
+}
+ 
+.page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transform-origin: left;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    backface-visibility: hidden;
+    padding: 40px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    background-color: #f8f4e3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+ 
+/* Z-index for correct page order */
+.front-cover { z-index: 6; }
+.page-1 { z-index: 5; }
+.page-2 { z-index: 4; }
+.page-3 { z-index: 3; }
+.page-4 { z-index: 2; }
+.closing-page { z-index: 1; }
+.back-cover { z-index: 0; }
+ 
+.front-cover, .back-cover {
+    background: linear-gradient(135deg, #f5d0e3, #e6c2d1);
+    border: 2px solid #e1b4c9;
+}
+ 
+/* Custom Front Cover with Image */
+.front-cover {
+    background-image: url("img 1.jpg");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    color: #4a4a4a; /* Ensure text is readable */
+}
+
+/* Custom Closing Page with a full background image */
+.closing-page {
+    background-image: url("flowers-frame-ornament-shabby-thumbnail.jpg");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    padding: 0; /* Removing padding to let image fill the whole space */
+}
+.closing-page .content-wrapper {
+    /* To keep the content readable on top of the image */
+    background: rgba(255, 255, 255, 0.2);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* For text readability */
+    height: 100%;
+    width: 100%;
+}
+ 
+.back-cover {
+    transform-origin: right;
+    left: auto;
+    right: 0;
+}
+ 
+.page.flipped {
+    transform: rotateY(-180deg);
+}
+ 
+/* Fix: Removed this rule which was causing the animation issue. 
+   The initial z-index stacking is now sufficient. */
+/* .page.flipped {
+    z-index: 7;
+} */
+.front-cover.flipped {
+    transform: rotateY(-180deg);
+}
+ 
+/* The main double-page spread layout */
+.double-page-content {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+/* The main change: setting background image on left and right halves */
+.left-half {
+    width: 50%;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-right: 1px dashed #d4c8b2; /* Add a spine-like effect */
+    background-image: url("img2.jpg");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+.right-half {
+    width: 50%;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-left: none;
+    background-image: url("img2l.jpg");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+/* New transparent panels for text and images */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.2);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 90%; /* To give some margin */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+ 
+/* Updated styles for text inside the right-half panel */
+.glass-panel h2, .glass-panel p {
+    color: #fff;
+    font-family: 'Dancing Script', cursive;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Added for readability */
+    margin: 0.5em 0;
+    text-align: center;
+}
+.glass-panel h2 {
+    font-size: 2.5em;
+}
+.glass-panel p {
+    font-size: 1.5em;
+    line-height: 1.5;
+}
+ 
+/* Updated image styling for auto-fit, focusing on max-width and object-fit */
+.glass-panel .image-section img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 10px;
+}
+
+/* Specific fix for page 1 image container to stretch the image */
+.page-1 .left-half .glass-panel {
+    /* To fill the container vertically */
+    height: 100%;
+    /* To ensure the inner content also takes up the full height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.page-1 .left-half .image-section img {
+    /* This is the key change: object-fit: cover makes the image fill the space */
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+/* Specific fix for page 4 image container */
+.page-4 .left-half .glass-panel {
+    /* max-height: 80%; */ /* Removed this conflicting property */
+    height: auto; /* Set height to auto to let content define it */
+    width: 90%;
+    padding: 10px; /* Reduced padding for better fit */
+}
+.page-4 .left-half .image-section img {
+    object-fit: contain; /* Changed back to contain for portrait images */
+    width: auto; /* Changed to auto to allow natural image width */
+    max-width: 100%;
+    height: auto; /* Allows natural image height to be respected */
+    max-height: 100%;
+}
+
+
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 20px;
+}
+ 
+.closing-page .closing-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+ 
+.page-cover h1 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 4em;
+    color: #c46294;
+    margin: 0;
+}
+.page-cover h2 { color: #88456a; margin-top: 10px; }
+ 
+.closing-page h1 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 3em;
+    color: #c46294;
+    margin: 0;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+.closing-page h2 {
+    color: #88456a;
+    margin-top: 10px;
+}
+
+/* New button styling for navigation with icons */
+.nav-btn {
+    background-color: #f27cad;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.nav-btn:hover {
+    background-color: #f0759e;
+    transform: translateY(-2px) scale(1.1);
+}
+
+/* Additional button styling for other buttons */
+#open-book, #restart-book-btn, #play-game-btn, #back-to-book-btn {
+    background-color: #f477ab;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    color: #fff;
+}
+#open-book:hover, #restart-book-btn:hover, #play-game-btn:hover, #back-to-book-btn:hover {
+    background-color: #d8aebc;
+    transform: translateY(-2px);
+}
+
+/* Game Modal Styling */
+.game-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transition: opacity 0.5s ease-in-out;
+    opacity: 0;
+}
+.game-modal.show {
+    display: flex;
+    opacity: 1;
+}
+
+.game-container {
+    background-color: #f8f4e3;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    text-align: center;
+    max-width: 90vw;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.game-container h2 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.5em;
+    color: #88456a;
+    margin-bottom: 20px;
+}
+.game-container #game-status {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #c46294;
+}
+ 
+.memory-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 10px;
+}
+.memory-card {
+    width: 80px;
+    height: 80px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+.card-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+.memory-card.flipped .card-inner {
+    transform: rotateY(180deg);
+}
+.card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3em;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+.card-front {
+    background-color: #e6c2d1;
+}
+.card-back {
+    background-color: #ffb6c1;
+    transform: rotateY(180deg);
+}
+.memory-card.matched .card-back {
+    background-color: #d4e157; /* A nice green for matched cards */
+    opacity: 0.8;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .book {
+        width: 90vw;
+        height: 90vh;
+        transform: none !important;
+    }
+    .book.open {
+        width: 90vw;
+        transform: rotateY(-10deg);
+    }
+    .page {
+        width: 100%;
+        left: 0;
+    }
+    .page.flipped {
+        transform: rotateY(-180deg);
+    }
+    .double-page-content {
+        flex-direction: column;
+    }
+    .left-half, .right-half {
+        width: 100%;
+        height: 50%;
+        border-right: none;
+        border-bottom: 1px dashed #d4c8b2;
+    }
+    .page-content p { font-size: 1em; }
+    .page-content p.signature { font-size: 1.5em; }
+    .navigation-buttons {
+        justify-content: center;
+        gap: 10px;
+    }
+
+    /* Fixed font size issue on small screens */
+    .glass-panel h2 {
+        font-size: 2em;
+    }
+    .glass-panel p {
+        font-size: 1.2em;
+        line-height: 1.4;
+    }
+
+    /* Additional fixes for image and text alignment */
+    .left-half, .right-half {
+        padding: 10px;
+        text-align: center;
+    }
+
+    .image-section.glass-panel {
+        width: 100%;
+        height: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    .image-section.glass-panel img {
+        width: 100%;
+        height: auto;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    
+    .closing-page .content-wrapper {
+        padding: 10px;
+    }
+
+    .memory-card {
+        width: 60px;
+        height: 60px;
+    }
+    .card-back, .card-front {
+        font-size: 2em;
+    }
+    .game-container h2 { font-size: 1.8em; }
+    .glass-panel {
+        width: 95%; /* Adjust for smaller screens */
+    }
+}
+</style>
+</head>
+<body>
+    <div id="heart-rain-container"></div>
+    <div id="confetti-container"></div>
+    <div class="book-container">
+        <div id="book" class="book">
+            <div class="page front-cover" id="front-cover">
+                <h1>A Memory Book</h1>
+                <h2>To Anita</h2>
+                <button id="open-book">Open</button>
+            </div>
+            
+            <!-- Page 1: Introduction -->
+            <div class="page page-1">
+                <div class="double-page-content">
+                    <div class="left-half">
+                        <div class="image-section glass-panel">
+                            <img src="Screenshot 2025-08-03 180442.png">
+                        </div>
+                    </div>
+                    <div class="right-half text-section">
+                        <div class="glass-panel">
+                            <h2>Happy Friendship Day 💗 </h2>
+                            <h2>To my old besti 😁 </h2>
+                        </div>
+                        <div class="navigation-buttons">
+                            <button class="nav-btn back-btn"><i class="fas fa-arrow-left"></i></button>
+                            <button class="nav-btn next-btn"><i class="fas fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page 2: First Memory -->
+            <div class="page page-2">
+                <div class="double-page-content">
+                    <div class="left-half">
+                        <div class="image-section glass-panel">
+                            <img src="gif1.gif" alt="A shared memory">
+                        </div>
+                    </div>
+                    <div class="right-half text-section">
+                        <div class="glass-panel">
+                            <p>Ha pta ha-pta ha ab aapan best friends nhi h,to tu soochagi ya sub kya h, but kya karu aaj friednship day k din kisi ki helps k liya thankyou to khena hi tha na, nhi to koi fir sa koi bolaga sub log ek jasa hi hota h 😁.</p>
+                        </div>
+                        <div class="navigation-buttons">
+                            <button class="nav-btn back-btn"><i class="fas fa-arrow-left"></i></button>
+                            <button class="nav-btn next-btn"><i class="fas fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Page 3: Second Memory -->
+            <div class="page page-3">
+                <div class="double-page-content">
+                    <div class="left-half">
+                        <div class="image-section glass-panel">
+                            <img src="shinchan-awks.gif" alt="Another shared memory">
+                        </div>
+                    </div>
+                    <div class="right-half text-section">
+                        <div class="glass-panel">
+                            <p>Such kahhu to jitne bhi pal aapan na saath bitaye, woh sab mere liye bahut khaas hain.</p>
+                            <p>Un yaadon ne mujhe bahut kuch sikhaya... aur main unke liye hamesha grateful rahoonga.</p>
+                            <p>wasa jyada emotional mat hona such btau to ya line mera nhi h mera ek khaas dost na di ha ,wahi dost jo tujhpa line maar rha tha 😂. </p>
+                        </div>
+                        <div class="navigation-buttons">
+                            <button class="nav-btn back-btn"><i class="fas fa-arrow-left"></i></button>
+                            <button class="nav-btn next-btn"><i class="fas fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Page 4: Farewell Message -->
+            <div class="page page-4">
+                <div class="double-page-content">
+                    <div class="left-half">
+                        <div class="image-section glass-panel">
+                            <img src="img01.jpg" alt="A shared memory">
+                        </div>
+                    </div>
+                    <div class="right-half text-section">
+                        <div class="glass-panel">
+                            <p class="signature">Always be happy. Happy Friendship Day.</p>
+                            <p class="signature">— Ashutosh</p>
+                        </div>
+                        <div class="navigation-buttons">
+                            <button class="nav-btn back-btn"><i class="fas fa-arrow-left"></i></button>
+                            <button class="nav-btn next-btn"><i class="fas fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Page 5: New Closing Page with Image -->
+            <div class="page closing-page page-5" id="closing-page">
+                <!-- Content is now centered on the single page, like the front cover -->
+                <div class="content-wrapper">
+                    <h1>Thank you for everything</h1>
+                    <div class="closing-options">
+                        <button id="restart-book-btn">Flip the Book</button>
+                        <button id="play-game-btn">Play Memory Game</button>
+                    </div>
+                    <div class="navigation-buttons">
+                        <button class="nav-btn back-btn"><i class="fas fa-arrow-left"></i></button>
+                        <!-- No next button on the last page -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="page back-cover" id="back-cover">
+                <h1>A Memory Book</h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Modal -->
+    <div id="game-modal" class="game-modal">
+        <div class="game-container">
+            <h2>Find the matching memories!</h2>
+            <div id="game-status">Time: 60s</div>
+            <div class="memory-grid" id="memory-grid"></div>
+            <button id="back-to-book-btn">Back to Book</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const book = document.getElementById('book');
+            const openBtn = document.getElementById('open-book');
+            const restartBtn = document.getElementById('restart-book-btn');
+            const pages = document.querySelectorAll('.page:not(.front-cover, .back-cover)');
+            const frontCover = document.getElementById('front-cover');
+            const backCover = document.getElementById('back-cover');
+            let currentPageIndex = 0;
+            
+            // Game modal elements
+            const gameModal = document.getElementById('game-modal');
+            const playBtn = document.getElementById('play-game-btn');
+            const backToBookBtn = document.getElementById('back-to-book-btn');
+
+            // Heart Blow Animation (Confetti)
+            function createConfetti() {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
+                confetti.style.backgroundColor = `#ff69b4`;
+                document.getElementById('confetti-container').appendChild(confetti);
+                setTimeout(() => confetti.remove(), 5000);
+            }
+            
+            function startConfetti() {
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(createConfetti, i * 100);
+                }
+            }
+
+            // Heart Rain Animation
+            function createHeartRain() {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                document.getElementById('heart-rain-container').appendChild(heart);
+                setTimeout(() => heart.remove(), 10000);
+            }
+            function startHeartRain() {
+                setInterval(createHeartRain, 500);
+            }
+
+            // Open book and start animations
+            openBtn.addEventListener('click', () => {
+                book.classList.add('open');
+                frontCover.classList.add('flipped');
+                startConfetti();
+                startHeartRain();
+            });
+
+            // Page flip logic (Double-page spreads)
+            const nextButtons = document.querySelectorAll('.next-btn');
+            nextButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // This logic now accounts for the closing page, which is pages.length
+                    if (currentPageIndex < pages.length) {
+                        pages[currentPageIndex].classList.add('flipped');
+                        currentPageIndex++;
+                    }
+                    if (currentPageIndex === pages.length) {
+                        // This flips the back cover when the last page is turned
+                        backCover.classList.add('flipped');
+                    }
+                });
+            });
+
+            // Back button logic
+            const backButtons = document.querySelectorAll('.back-btn');
+            backButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    if (currentPageIndex > 0) {
+                        currentPageIndex--;
+                        pages[currentPageIndex].classList.remove('flipped');
+                        backCover.classList.remove('flipped');
+                    } else {
+                        // Go back to the front cover
+                        frontCover.classList.remove('flipped');
+                        book.classList.remove('open');
+                    }
+                });
+            });
+
+            // Restart Book Logic
+            restartBtn.addEventListener('click', () => {
+                book.classList.remove('open');
+                frontCover.classList.remove('flipped');
+                backCover.classList.remove('flipped');
+                pages.forEach(page => {
+                    page.classList.remove('flipped');
+                });
+                currentPageIndex = 0;
+                
+                document.querySelectorAll('.heart').forEach(h => h.remove());
+                document.querySelectorAll('.confetti').forEach(c => c.remove());
+            });
+
+            // --- Mini-game Logic ---
+            const emojis = ['❤️', '✨', '🎈', '💖', '🤗', '🥳', '🎉', '🍬'];
+            let cards = [];
+            let flippedCards = [];
+            let matchedPairs = 0;
+            let canFlip = true;
+            let timer = 60;
+            let timerId;
+
+            function shuffle(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+
+            function createBoard() {
+                const gameGrid = document.getElementById('memory-grid');
+                gameGrid.innerHTML = '';
+                matchedPairs = 0;
+                timer = 60;
+                document.getElementById('game-status').innerText = `Time: ${timer}s`;
+
+                const gameEmojis = shuffle([...emojis, ...emojis]);
+                
+                gameEmojis.forEach((emoji, index) => {
+                    const card = document.createElement('div');
+                    card.classList.add('memory-card');
+                    card.dataset.emoji = emoji;
+                    card.dataset.index = index;
+
+                    const cardInner = document.createElement('div');
+                    cardInner.classList.add('card-inner');
+
+                    const cardFront = document.createElement('div');
+                    cardFront.classList.add('card-front');
+                    cardFront.innerText = '?';
+
+                    const cardBack = document.createElement('div');
+                    cardBack.classList.add('card-back');
+                    cardBack.innerText = emoji;
+
+                    cardInner.appendChild(cardFront);
+                    cardInner.appendChild(cardBack);
+                    card.appendChild(cardInner);
+                    gameGrid.appendChild(card);
+                    cards.push(card);
+
+                    card.addEventListener('click', flipCard);
+                });
+            }
+
+            function flipCard(event) {
+                if (!canFlip) return;
+                const clickedCard = event.currentTarget;
+                if (clickedCard.classList.contains('flipped')) return;
+
+                clickedCard.classList.add('flipped');
+                flippedCards.push(clickedCard);
+
+                if (flippedCards.length === 2) {
+                    canFlip = false;
+                    setTimeout(checkForMatch, 1000);
+                }
+            }
+
+            function checkForMatch() {
+                const [card1, card2] = flippedCards;
+                if (card1.dataset.emoji === card2.dataset.emoji) {
+                    card1.classList.add('matched');
+                    card2.classList.add('matched');
+                    matchedPairs++;
+                    if (matchedPairs === emojis.length) {
+                        endGame('win');
+                    }
+                } else {
+                    card1.classList.remove('flipped');
+                    card2.classList.remove('flipped');
+                }
+                flippedCards = [];
+                canFlip = true;
+            }
+
+            function startGame() {
+                createBoard();
+                gameModal.classList.add('show');
+                timerId = setInterval(() => {
+                    timer--;
+                    document.getElementById('game-status').innerText = `Time: ${timer}s`;
+                    if (timer <= 0) {
+                        endGame('lose');
+                    }
+                }, 1000);
+            }
+
+            function endGame(status) {
+                clearInterval(timerId);
+                canFlip = false;
+                if (status === 'win') {
+                    document.getElementById('game-status').innerText = 'You won! You have a great memory!';
+                } else {
+                    document.getElementById('game-status').innerText = 'Time\'s up! Try again?';
+                }
+            }
+
+            // Game button listeners
+            playBtn.addEventListener('click', startGame);
+
+            backToBookBtn.addEventListener('click', () => {
+                gameModal.classList.remove('show');
+                clearInterval(timerId);
+            });
+        });
+    </script>
+</body>
+</html>
